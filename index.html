@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sinterklaas Timer</title>
+    <style>
+        body {
+            background-color: #fff9e6; /* Lichte achtergrond */
+            font-family: 'Comic Sans MS', cursive;
+            color: #a52a2a; /* Roodbruin */
+            text-align: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+        h1 {
+            font-size: 2.5em;
+            color: #d2691e;
+        }
+        .timer-container {
+            margin-top: 30px;
+            padding: 20px;
+            border: 3px solid #d2691e;
+            border-radius: 20px;
+            display: inline-block;
+            background-color: #fff;
+            position: relative;
+        }
+        .timer-display {
+            font-size: 3em;
+            margin: 20px 0;
+            color: #b22222;
+        }
+        .start-btn {
+            background-color: #b22222;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            border-radius: 15px;
+            transition: transform 0.2s ease-in-out;
+        }
+        .start-btn:hover {
+            transform: scale(1.1);
+            background-color: #ff6347;
+        }
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: red;
+            border-radius: 50%;
+            animation: fall 5s linear infinite;
+            pointer-events: none;
+        }
+        .celebration-text {
+            display: none;
+            font-size: 2em;
+            color: #ff4500;
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            25%, 75% { opacity: 0; }
+        }
+        .piet-img {
+            position: fixed;
+            bottom: -150px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            display: none;
+            animation: jump 2s ease-out forwards;
+        }
+        @keyframes jump {
+            0% { bottom: -150px; }
+            50% { bottom: 200px; }
+            100% { bottom: 100px; }
+        }
+        @keyframes fall {
+            0% { transform: translateY(-100px) translateX(0); }
+            100% { transform: translateY(100vh) translateX(200px); }
+        }
+    </style>
+</head>
+<body>
+    <h1>🎁 Sinterklaas Timer 🎁</h1>
+    <div class="timer-container">
+        <label for="hours">Uren:</label>
+        <input type="number" id="hours" min="0" value="0">
+        <label for="minutes">Minuten:</label>
+        <input type="number" id="minutes" min="0" value="0">
+        <label for="seconds">Seconden:</label>
+        <input type="number" id="seconds" min="0" value="0">
+        <button class="start-btn" onclick="startTimer()">Start</button>
+        <div class="timer-display" id="timerDisplay">00:00:00</div>
+        <div class="celebration-text" id="celebrationText">🎉 Tijd is om! 🎉</div>
+        <img src="Screenshot_2024-11-14_165430-removebg-preview.png" class="piet-img" id="piet" alt="Piet" style="width: 500px; height: auto;">
+    </div>
+
+    <script>
+        let countdown;
+
+        // Functie om confetti te maken
+        function createConfetti() {
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement("div");
+                confetti.className = "confetti";
+                confetti.style.left = Math.random() * window.innerWidth + "px";
+                confetti.style.backgroundColor = 
+                    `hsl(${Math.random() * 360}, 100%, 50%)`;
+                confetti.style.animationDuration = 2 + Math.random() * 3 + "s";
+                document.body.appendChild(confetti);
+
+                setTimeout(() => confetti.remove(), 5000);
+            }
+        }
+
+        function startTimer() {
+            // Tijd ophalen
+            let hours = parseInt(document.getElementById("hours").value) || 0;
+            let minutes = parseInt(document.getElementById("minutes").value) || 0;
+            let seconds = parseInt(document.getElementById("seconds").value) || 0;
+
+            // Totale tijd berekenen
+            let totalTime = hours * 3600 + minutes * 60 + seconds;
+
+            // Reset confetti en Piet
+            clearInterval(countdown);
+            document.getElementById("celebrationText").style.display = "none";
+            document.getElementById("piet").style.display = "none";
+
+            countdown = setInterval(() => {
+                if (totalTime <= 0) {
+                    clearInterval(countdown);
+                    document.getElementById("timerDisplay").textContent = "00:00:00";
+                    document.getElementById("celebrationText").style.display = "block";
+                    document.getElementById("piet").style.display = "block"; // Laat Piet zien
+                    createConfetti(); // Start confetti
+                    return;
+                }
+
+                // Tijd updaten
+                let hrs = Math.floor(totalTime / 3600);
+                let mins = Math.floor((totalTime % 3600) / 60);
+                let secs = totalTime % 60;
+
+                document.getElementById("timerDisplay").textContent =
+                    `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+
+                totalTime--;
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
